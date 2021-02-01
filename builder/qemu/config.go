@@ -390,6 +390,10 @@ type Config struct {
 	// `virtio-scsi`. The Qemu builder uses `virtio` by default.
 	// Some ARM64 images require `virtio-scsi`.
 	CDROMInterface string `mapstructure:"cdrom_interface" required:"false"`
+	// This is uri that points to a cloud-init source via file:// http:// or https:// it should
+	// support /user-data, /meta-data, /vendor-data (optional) paths
+	// https://cloudinit.readthedocs.io/en/latest/topics/datasources/nocloud.html for more details
+	SeedFrom string `mapstructure:"seed_from" required:"false"`
 
 	// TODO(mitchellh): deprecate
 	RunOnce bool `mapstructure:"run_once"`
@@ -406,6 +410,7 @@ func (c *Config) Prepare(raws ...interface{}) ([]string, error) {
 			Exclude: []string{
 				"boot_command",
 				"qemuargs",
+				"seed_from",
 			},
 		},
 	}, raws...)

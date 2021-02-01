@@ -317,3 +317,7 @@
   Allowed values include any of `ide`, `scsi`, `virtio` or
   `virtio-scsi`. The Qemu builder uses `virtio` by default.
   Some ARM64 images require `virtio-scsi`.
+
+- `seed_from` (string) - This is uri that points to a cloud-init source via file:// http:// or https:// it should
+  support /user-data, /meta-data, /vendor-data (optional) paths
+  https://cloudinit.readthedocs.io/en/latest/topics/datasources/nocloud.html for more details

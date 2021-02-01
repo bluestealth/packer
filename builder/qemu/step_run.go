@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/url"
 	"path/filepath"
 	"strings"
 
@@ -342,6 +343,18 @@ func (s *stepRun) applyUserOverrides(defaultArgs map[string]interface{}, config 
 		}
 	}
 
+	// Interpolate seed from uri string
+	if config.SeedFrom != "" {
+		seedArgs, err := getCloudInitSeed(config, state)
+		if err != nil {
+			return nil, err
+		}
+		if _, ok := inArgs["-smbios"]; !ok {
+			inArgs["-smbios"] = make([]string, 0)
+		}
+		inArgs["-smbios"] = append(inArgs["-smbios"], seedArgs...)
+	}
+
 	// Check if we are missing the netDevice #6804
 	if x, ok := inArgs["-device"]; ok {
 		if !strings.Contains(strings.Join(x, ""), config.NetDevice) {
@@ -369,6 +382,52 @@ func (s *stepRun) getCommandArgs(config *Config, state multistep.StateBag) ([]st
 
 	return s.applyUserOverrides(defaultArgs, config, state)
 }
+
+
+func getCloudInitSeed(config *Config,  state multistep.StateBag) ([]string, error) {
+	var arguments []string
+
+	httpIp := state.Get("http_ip").(string)
+	httpPort := state.Get("http_port").(int)
+
+	type cloudInitSeedTemplateData struct {
+		HTTPIP      string
+		HTTPPort    int
+	}
+
+	ctx := interpolate.NewContext()
+	ctx.Data = cloudInitSeedTemplateData{
+		HTTPIP:      httpIp,
+		HTTPPort:    httpPort,
+	}
+
+	seedFrom, err := interpolate.Render(config.SeedFrom, ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	instanceId := fmt.Sprintf("i-%s", os.Getenv("PACKER_RUN_UUID"))
+	seedUri, err := url.Parse(seedFrom)
+	if err != nil {
+		return nil, err
+	}
+	if seedUri.Scheme == "file" {
+		arguments = append(arguments,
+			fmt.Sprintf("type=1,serial=ds=nocloud;i=%s;h=%s;s=%s",
+				instanceId,
+				config.VMName,
+				seedUri.String()))
+	} else {
+		arguments = append(arguments,
+			fmt.Sprintf("type=1,serial=ds=nocloud-net;i=%s;h=%s;s=%s",
+				instanceId,
+				config.VMName,
+				seedUri.String()))
+	}
+
+	return arguments, nil
+}
+
 
 func processArgs(args [][]string, ctx *interpolate.Context) ([][]string, error) {
 	var err error
