@@ -347,6 +347,8 @@ type Config struct {
 	// some platforms. For example qemu-kvm, or qemu-system-i386 may be a
 	// better choice for some systems.
 	QemuBinary string `mapstructure:"qemu_binary" required:"false"`
+	// Architecture of virtual machine
+	Architecture string `mapstructure:"architecture_type" required:"false"`
 	// Enable QMP socket. Location is specified by `qmp_socket_path`. Defaults
 	// to false.
 	QMPEnable bool `mapstructure:"qmp_enable" required:"false"`
@@ -471,7 +473,18 @@ func (c *Config) Prepare(raws ...interface{}) ([]string, error) {
 	}
 
 	if c.MachineType == "" {
-		c.MachineType = "pc"
+		switch c.Architecture {
+		case "mips", "mipsle", "mips64", "mips64le":
+			c.MachineType = "malta"
+		case "i386", "x86_64":
+			c.MachineType = "q35"
+		case "ppc":
+			c.MachineType = "ppce500"
+		case "ppc64":
+			c.MachineType = "pseries"
+		default:
+			c.MachineType = "virt"
+		}
 	}
 
 	if c.OutputDir == "" {
@@ -479,7 +492,12 @@ func (c *Config) Prepare(raws ...interface{}) ([]string, error) {
 	}
 
 	if c.QemuBinary == "" {
-		c.QemuBinary = "qemu-system-x86_64"
+		switch c.Architecture {
+		case "ppc64", "ppc64le":
+			c.QemuBinary = "qemu-system-ppc64"
+		default:
+			c.QemuBinary = fmt.Sprintf("qemu-system-%s", c.Architecture)
+		}
 	}
 
 	if c.MemorySize < 10 {
