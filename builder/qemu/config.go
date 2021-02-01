@@ -496,6 +496,23 @@ func (c *Config) Prepare(raws ...interface{}) ([]string, error) {
 		c.OutputDir = fmt.Sprintf("output-%s", c.PackerBuildName)
 	}
 
+	if c.Architecture == "" {
+		switch runtime.GOARCH {
+		case "mipsle":
+			c.Architecture = "mipsel"
+		case "mips64el":
+			c.Architecture = "mips64el"
+		case "386":
+			c.Architecture = "i386"
+		case "amd64":
+			c.Architecture = "x86_64"
+		case "arm64":
+			c.Architecture = "aarch64"
+		default:
+			c.Architecture = runtime.GOARCH
+		}
+	}
+
 	if c.QemuBinary == "" {
 		switch c.Architecture {
 		case "ppc64", "ppc64le":
