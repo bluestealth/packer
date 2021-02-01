@@ -357,16 +357,6 @@ github.com/hashicorp/memberlist v0.2.2/go.mod h1:MS2lj3INKhZjWNqd3N0m3J+Jxf3DAOn
 github.com/hashicorp/packer v1.6.6/go.mod h1:meJucaEeJro8UP1jw+KaOCpaiC4VE+itPLXY8lbIU2A=
 github.com/hashicorp/packer v1.6.7-0.20210107234516-6564ee76e807/go.mod h1:fBz288Z4of8zkpDWwL/ngG1txC36jGSXS7dnUmUaLUs=
 github.com/hashicorp/packer-plugin-sdk v0.0.6/go.mod h1:Nvh28f+Jmpp2rcaN79bULTouNkGNDRfHckhHKTAXtyU=
-github.com/hashicorp/packer-plugin-sdk v0.0.7-0.20210113192617-8a28198491f7 h1:2N1NAfBCmG1vIkbdlIOb/YbaYXCW40YOllWqMZDjnHM=
-github.com/hashicorp/packer-plugin-sdk v0.0.7-0.20210113192617-8a28198491f7/go.mod h1:YdWTt5w6cYfaQG7IOi5iorL+3SXnz8hI0gJCi8Db/LI=
-github.com/hashicorp/packer-plugin-sdk v0.0.7-0.20210120130732-6167b5e5b2e8 h1:50/m5nP40RaXnXyd0GHHUd+CfkmcYeTNGAY5eXQlBeY=
-github.com/hashicorp/packer-plugin-sdk v0.0.7-0.20210120130732-6167b5e5b2e8/go.mod h1:YdWTt5w6cYfaQG7IOi5iorL+3SXnz8hI0gJCi8Db/LI=
-github.com/hashicorp/packer-plugin-sdk v0.0.7-0.20210121103409-4b079ce99178 h1:AVT2ugu3+UzTDEViAxMFbUzzxgUpSVMMpbuaOEd97HY=
-github.com/hashicorp/packer-plugin-sdk v0.0.7-0.20210121103409-4b079ce99178/go.mod h1:YdWTt5w6cYfaQG7IOi5iorL+3SXnz8hI0gJCi8Db/LI=
-github.com/hashicorp/packer-plugin-sdk v0.0.7 h1:adELlId/KOGWXmQ79L+NwYSgKES6811RVXiRCj4FE0s=
-github.com/hashicorp/packer-plugin-sdk v0.0.7/go.mod h1:YdWTt5w6cYfaQG7IOi5iorL+3SXnz8hI0gJCi8Db/LI=
-github.com/hashicorp/packer-plugin-sdk v0.0.8 h1:/qyCO9YqALnaHSE++y+//tNy68++4SThZctqTwqikrU=
-github.com/hashicorp/packer-plugin-sdk v0.0.8/go.mod h1:YdWTt5w6cYfaQG7IOi5iorL+3SXnz8hI0gJCi8Db/LI=
 github.com/hashicorp/packer-plugin-sdk v0.0.9 h1:PWX6g0TeAbev5zhiRR91k3Z0wVCqsivs6xyBTRmPMkQ=
 github.com/hashicorp/packer-plugin-sdk v0.0.9/go.mod h1:YdWTt5w6cYfaQG7IOi5iorL+3SXnz8hI0gJCi8Db/LI=
 github.com/hashicorp/serf v0.8.2/go.mod h1:6hOLApaqBFA1NXqRQAsxw9QxuDEvNxSQRwA/JwenrHc=
@@ -472,6 +462,7 @@ github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7/go.mod h1:ZX
 github.com/mitchellh/go-wordwrap v1.0.0 h1:6GlHJ/LTGMrIJbwgdqdl2eEH8o+Exx/0m8ir9Gns0u4=
 github.com/mitchellh/go-wordwrap v1.0.0/go.mod h1:ZXFpozHsX6DPmq2I0TCekCxypsnAUbP2oI0UX1GXzOo=
 github.com/mitchellh/gox v0.4.0/go.mod h1:Sd9lOJ0+aimLBi73mGofS1ycjY8lL3uZM3JPS42BGNg=
+github.com/mitchellh/gox v1.0.1 h1:x0jD3dcHk9a9xPSDN6YEL4xL6Qz0dvNYm8yZqui5chI=
 github.com/mitchellh/gox v1.0.1/go.mod h1:ED6BioOGXMswlXa2zxfh/xdd5QhwYliBFn9V18Ap4z4=
 github.com/mitchellh/iochan v1.0.0 h1:C+X3KsSTLFVBr/tK1eYN/vs4rJcvsiLU338UhYPJWeY=
 github.com/mitchellh/iochan v1.0.0/go.mod h1:JwYml1nuB7xOzsp52dPpHFffvOCDupsG0QubkSMEySY=
