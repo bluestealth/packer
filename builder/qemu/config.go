@@ -355,6 +355,8 @@ type Config struct {
 	QemuBinary string `mapstructure:"qemu_binary" required:"false"`
 	// Architecture of virtual machine
 	Architecture string `mapstructure:"architecture_type" required:"false"`
+	// Firmware Type of virtual machine
+	FirmwareType string `mapstructure:"firmware_type" required:"false"`
 	// Enable QMP socket. Location is specified by `qmp_socket_path`. Defaults
 	// to false.
 	QMPEnable bool `mapstructure:"qmp_enable" required:"false"`
@@ -517,6 +519,10 @@ func (c *Config) Prepare(raws ...interface{}) ([]string, error) {
 		default:
 			c.MachineType = "virt"
 		}
+	}
+
+	if c.FirmwareType == "" {
+		c.FirmwareType = "bios"
 	}
 
 	if c.QemuBinary == "" {

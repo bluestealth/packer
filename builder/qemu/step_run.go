@@ -3,8 +3,10 @@ package qemu
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"net/url"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -12,6 +14,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
+	"github.com/hashicorp/packer/builder/qemu/firmware"
 )
 
 // stepRun runs the virtual machine
@@ -336,6 +339,11 @@ func (s *stepRun) applyUserOverrides(defaultArgs map[string]interface{}, config 
 		}
 	}
 
+	// set loader default args
+	if err := setFirmwareArgs(config, defaultArgs); err != nil {
+		return nil, err
+	}
+
 	// get any remaining missing default args from the default settings
 	for key := range defaultArgs {
 		if _, ok := inArgs[key]; !ok {
@@ -388,6 +396,62 @@ func (s *stepRun) getCommandArgs(config *Config, state multistep.StateBag) ([]st
 	defaultArgs := s.getDefaultArgs(config, state)
 
 	return s.applyUserOverrides(defaultArgs, config, state)
+}
+
+func setFirmwareArgs(config *Config, defaultArgs map[string]interface{}) error {
+	loader, err := firmware.Loader(config.Architecture, config.FirmwareType, config.MachineType)
+	if err != nil {
+		return err
+	}
+	if loader != nil {
+		switch config.FirmwareType {
+		case "bios":
+		case "uefi", "uefi-secure":
+			defaultArgs["-drive"] = append(defaultArgs["-drive"].([]string),
+				fmt.Sprintf("if=pflash,unit=0,id=pflash0,readonly=on,file=%s,format=%s",
+					loader.Mapping.Executable.Filename,
+					loader.Mapping.Executable.Format))
+			if loader.HasFeature("secure-boot") {
+				defaultArgs["-global"] = []string{"driver=cfi.pflash01,property=secure,value=on"}
+			}
+			if loader.HasFeature("requires-smm") {
+				defaultArgs["-machine"] = defaultArgs["-machine"].(string) + ",smm=on"
+			}
+			if loader.Mapping.NVRAMTemplate != nil {
+				instanceId := fmt.Sprintf("i-%s", os.Getenv("PACKER_RUN_UUID"))
+				nvramFilePath, err := packersdk.CachePath(
+					"uefi_vars",
+					fmt.Sprintf("%s_OVMF_VARS.fd", instanceId))
+				if err != nil {
+					return err
+				}
+				src, err := os.Open(loader.Mapping.NVRAMTemplate.Filename)
+				if err != nil {
+					return err
+				}
+				defer src.Close()
+				dst, err := os.OpenFile(nvramFilePath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0o644)
+				if err != nil {
+					return err
+				}
+				_, err = io.Copy(dst, src)
+				if err != nil {
+					_ = dst.Close()
+					return err
+				}
+				err = dst.Close()
+				if err != nil {
+					return err
+				}
+				defaultArgs["-drive"] = append(defaultArgs["-drive"].([]string),
+					fmt.Sprintf("if=pflash,unit=1,id=pflash1,readonly=off,file=%s,format=%s",
+						nvramFilePath,
+						loader.Mapping.NVRAMTemplate.Format))
+			}
+		}
+	}
+
+	return nil
 }
 
 func getCloudInitSeed(config *Config, state multistep.StateBag) ([]string, error) {
