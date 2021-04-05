@@ -120,6 +120,7 @@ type FlatConfig struct {
 	QemuArgs                  [][]string        `mapstructure:"qemuargs" required:"false" cty:"qemuargs" hcl:"qemuargs"`
 	QemuImgArgs               *FlatQemuImgArgs  `mapstructure:"qemu_img_args" required:"false" cty:"qemu_img_args" hcl:"qemu_img_args"`
 	QemuBinary                *string           `mapstructure:"qemu_binary" required:"false" cty:"qemu_binary" hcl:"qemu_binary"`
+	Architecture              *string           `mapstructure:"architecture_type" required:"false" cty:"architecture_type" hcl:"architecture_type"`
 	QMPEnable                 *bool             `mapstructure:"qmp_enable" required:"false" cty:"qmp_enable" hcl:"qmp_enable"`
 	QMPSocketPath             *string           `mapstructure:"qmp_socket_path" required:"false" cty:"qmp_socket_path" hcl:"qmp_socket_path"`
 	UseDefaultDisplay         *bool             `mapstructure:"use_default_display" required:"false" cty:"use_default_display" hcl:"use_default_display"`
@@ -256,6 +257,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"qemuargs":                     &hcldec.AttrSpec{Name: "qemuargs", Type: cty.List(cty.List(cty.String)), Required: false},
 		"qemu_img_args":                &hcldec.BlockSpec{TypeName: "qemu_img_args", Nested: hcldec.ObjectSpec((*FlatQemuImgArgs)(nil).HCL2Spec())},
 		"qemu_binary":                  &hcldec.AttrSpec{Name: "qemu_binary", Type: cty.String, Required: false},
+		"architecture_type":            &hcldec.AttrSpec{Name: "architecture_type", Type: cty.String, Required: false},
 		"qmp_enable":                   &hcldec.AttrSpec{Name: "qmp_enable", Type: cty.Bool, Required: false},
 		"qmp_socket_path":              &hcldec.AttrSpec{Name: "qmp_socket_path", Type: cty.String, Required: false},
 		"use_default_display":          &hcldec.AttrSpec{Name: "use_default_display", Type: cty.Bool, Required: false},
